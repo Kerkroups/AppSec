@@ -1,0 +1,63 @@
+## Command Injections
+
+TRIGGER: ProcessBuilder, Runtime.exec
+
+EXAMPLE 1:
+Runtime rt = Runtime.getRuntime();
+Process proc = rt.exec(new String[] {"sh", "-c", "ping " + req.getParameter("ip")});
+
+EXAMPLE 2:
+process = new ProcessBuilder(new String[] {"sh", "-c", "ping -c 2 " + ipAddress}).redirectErrorStream(true).start();
+
+GOOD PRACTICE: ProcessBuilder b = new ProcessBuilder("ping",req.getParameter("ip"));
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+## Directory Traversal
+
+EXAMPLE 1:
+public String getFilePathToRead( @RequestParam(name="path") String path, Model model) // "../../../../../../../../{path to file}"
+{
+return new File(folderSearch,path).getCanonicalPath().toString(); //canonical path use $path.
+};
+
+EXAMPLE 2 (ZIP SLIP):
+Enumeration<ZipEntry> entries = zip.getEntries();
+while (entries.hasMoreElements()) {
+ZipEntry e = entries.nextElement();
+File f = new File(destinationDir, e.getName()); //e.getName() gets from the archive the name of the file to be unpacked
+InputStream input = zip.getInputStream(e);
+IOUtils.copy(input, write(f));
+}
+
+GOOD PRACTICE:
+File file = new File(BASE_DIRECTORY, userInput);
+if (file.getCanonicalPath().startsWith(BASE_DIRECTORY)) {
+// process file
+}
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+## SQL Injection
+
+EXAMPLE 1:
+String sqlQuery=String.format("SELECT username FROM Users WHERE userId='%s',req.getParameter("id"));
+stmt = conn.createStatement();
+ResultSet res = st.executeQuery(sqlQuery);
+
+EXAMPLE 2:
+String id = queryParams.get(Constants.ID);
+        BodyBuilder bodyBuilder = ResponseEntity.status(HttpStatus.OK);
+        return applicationJdbcTemplate.query(
+                "select * from cars where id=" + id, // SQL query concatenate with controlled user input
+                (rs) -> {
+                    if (rs.next()) {
+                        return bodyBuilder.body(CAR_IS_PRESENT_RESPONSE);
+                    }
+                    return bodyBuilder.body(
+                            ErrorBasedSQLInjectionVulnerability.CAR_IS_NOT_PRESENT_RESPONSE);
+                });
+
+
+GOOD PRACTICE:
+String query = "SELECT username FROM Users WHERE userId = ?";
+stmt = conn.prepareStatement(query);
+stmt.setString(1, req.getParameter("id"));
+ResultSet rs = stmt.executeQuery();
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
