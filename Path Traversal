@@ -1,0 +1,43 @@
+EXAMPLE 1:
+public Response getImage(@javax.ws.rs.PathParam("image") String image) {
+    File file = new File("resources/images/", image); // <-- RIGHT HERE
+
+    if (!file.exists()) {
+        return Response.status(Status.NOT_FOUND).build();
+    }
+
+    return Response.ok().entity(new FileInputStream(file)).build();
+}
+------------------------------------------------------------------------------------------------------------------------
+EXAMPLE 2:
+private ResponseEntity<GenericVulnerabilityResponseBean<String>> readFile(
+            Supplier<Boolean> condition, String fileName) {
+        if (condition.get()) {
+            try {
+                File infoFile =
+                        new File(
+                                this.getClass().getResource("/").toURI().getPath()
+                                        + "scripts/PathTraversal/"
+                                        + fileName); // <-- RIGHT HERE
+                FileInputStream infoFileStream;
+                infoFileStream = new FileInputStream(infoFile);
+                if (infoFileStream != null) {
+                    try (BufferedReader reader =
+                            new BufferedReader(new InputStreamReader(infoFileStream))) {
+                        String information = reader.readLine(); //define reader
+                        StringBuilder payload = new StringBuilder(); //contain all data of requested file
+                        while (information != null) {
+                            payload.append(information);
+                            information = reader.readLine(); //read data line-by-line
+                        }
+------------------------------------------------------------------------------------------------------------------------
+GOOD EXAMPLE:
+public Response getImage(@javax.ws.rs.PathParam("image") String image) {
+    File file = new File("resources/images/", FilenameUtils.getName(image)); // <-- image is now sanitized
+
+    if (!file.exists()) {
+        return Response.status(Status.NOT_FOUND).build();
+    }
+
+    return Response.ok().entity(new FileInputStream(file)).build();
+}
