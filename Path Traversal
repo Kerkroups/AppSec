@@ -91,3 +91,9 @@ public Response getImage(@javax.ws.rs.PathParam("image") String image) {
 
     return Response.ok().entity(new FileInputStream(file)).build();
 }
+
+GOOD EXAMPLE:
+File file = new File(BASE_DIRECTORY, userInput);
+if (file.getCanonicalPath().startsWith(BASE_DIRECTORY)) {
+    // process file
+}
