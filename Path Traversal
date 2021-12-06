@@ -40,6 +40,7 @@ String fileName = queryParams.get(URL_PARAM_KEY);
 Комментарии: !requestEntity.getUrl().toString().contains("../") && fileName != null
 В этой строке выполняется проверка на содежрание в запросе последовательности "../" и не пустом значении переменной fileName.
 Обход ограничения: %2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2Fetc%2Fpasswd
+                   %2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%65%74%63%2f%70%61%73%73%77%64
 ------------------------------------------------------------------------------------------------------------------------
 GOOD EXAMPLE:
 public Response getImage(@javax.ws.rs.PathParam("image") String image) {
