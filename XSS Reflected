@@ -1,0 +1,13 @@
+## EXAMPLE 1:
+public ResponseEntity<String> getVulnerablePayloadLevel1(
+            @RequestParam Map<String, String> queryParams) {
+        String vulnerablePayloadWithPlaceHolder = "<div>%s<div>";
+        StringBuilder payload = new StringBuilder();
+        for (Map.Entry<String, String> map : queryParams.entrySet()) {
+            payload.append(String.format(vulnerablePayloadWithPlaceHolder, map.getValue()));
+        }
+        return new ResponseEntity<String>(payload.toString(), HttpStatus.OK);
+    }
+Комментарии: нет фильтрафции пользовательского ввода. Отправка данных в URI.
+Эксплуатация: http://localhost:9090/PATH/XSS/VALUE?value=<script>alert(XSS)</script>
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
