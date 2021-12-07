@@ -81,7 +81,7 @@ String fileName = queryParams.get(URL_PARAM_KEY);
 1) %2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/etc/passwd
 ------------------------------------------------------------------------------------------------------------------------
 
-GOOD EXAMPLE:
+## GOOD EXAMPLE 1:
 public Response getImage(@javax.ws.rs.PathParam("image") String image) {
     File file = new File("resources/images/", FilenameUtils.getName(image)); // <-- image is now sanitized
 
@@ -92,7 +92,7 @@ public Response getImage(@javax.ws.rs.PathParam("image") String image) {
     return Response.ok().entity(new FileInputStream(file)).build();
 }
 
-GOOD EXAMPLE:
+## GOOD EXAMPLE 2:
 File file = new File(BASE_DIRECTORY, userInput);
 if (file.getCanonicalPath().startsWith(BASE_DIRECTORY)) {
     // process file
