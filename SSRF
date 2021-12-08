@@ -1,0 +1,24 @@
+## EXAMPLE:
+private static final String IMAGE_URL = "imageurl"; 
+public ResponseEntity<GenericVulnerabilityResponseBean<byte[]>> getVulnerablePayloadLevel1(
+            @RequestParam(IMAGE_URL) String urlImage) {       //параметр запроса переменна "urlImage"
+        try {
+            URL u = new URL(urlImage); // создать объект класса java.net.URL
+            URLConnection urlConnection = u.openConnection(); // openConnection предназначен для создания канала между приложением и сетевым ресурсом
+            byte[] bytes;                                     // определяем пустой байт массив
+            try (InputStream in = urlConnection.getInputStream()) {
+                bytes = StreamUtils.copyToByteArray(urlConnection.getInputStream()); // копирует содержимое заданного InputStream в  переменную bytes
+            }
+            return new ResponseEntity<>(
+                    new GenericVulnerabilityResponseBean<>(bytes, true), HttpStatus.OK); // выводит данные
+        } catch (Exception e) {
+            LOGGER.error(
+                    "Following exception occurred while opening the connection to {}", urlImage, e);
+        }
+        return new ResponseEntity<>(
+                new GenericVulnerabilityResponseBean<>(
+                        ("Failed to fetch image from URL " + urlImage)
+                                .getBytes(StandardCharset.UTF_8),
+                        false),
+                HttpStatus.BAD_REQUEST);
+    }
