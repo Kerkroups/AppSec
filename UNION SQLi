@@ -1,0 +1,13 @@
+## EXAMPL 1:
+String id = queryParams.get("id");
+        return applicationJdbcTemplate.query(
+                "select * from cars where id=" + id, // конкатенация SQL запроса с предварительно невалидируемым пользовательским вводом
+                (rs) -> {
+                    CarInformation carInformation = new CarInformation();
+                    if (rs.next()) {
+                        carInformation.setId(rs.getInt(1));
+                        carInformation.setName(rs.getString(2));
+                        carInformation.setImagePath(rs.getString(3));
+                    }
+                    return new ResponseEntity<CarInformation>(carInformation, HttpStatus.OK);
+                });
