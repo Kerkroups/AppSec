@@ -1,0 +1,2 @@
+Parameter tampering = \<input\ type\=\"hidden\"
+Padding Oracle = \AES\/CBC\/PKCS5Padding
